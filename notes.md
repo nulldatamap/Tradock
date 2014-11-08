@@ -12,7 +12,7 @@ An agent buying and selling shares on a market ( can the be user )
 ## AI
 
 So the AI's decision making is going to be based on:
-* __Threshold____, how low to buy, how high to sell?
+* __Threshold__, how low to buy, how high to sell?
 * __Stability__, how likely are we to buy and sell in unstable markets?
 * __Longevity__, are we going for short-term or long-term investments?
 * __Risk__, how much is on the line for us?
