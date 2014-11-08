@@ -1,7 +1,7 @@
 # Notes!
 So, it's about trading on a stock market.
 
-## StockMarket
+## Market
 
 Has a value and has people buy and selling shares.
 
