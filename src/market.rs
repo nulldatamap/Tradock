@@ -79,7 +79,7 @@ impl Market {
     self.holders += self.buys - self.sells;
 
     let holder_growth_rate = ( self.holders as f64 ) / prev_holders;
-    self.price *= holder_growth_rate ;
+    self.price *= holder_growth_rate;
 
     self.buys = 0;
     self.sells = 0;
