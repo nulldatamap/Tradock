@@ -8,7 +8,7 @@ use agent::Agent;
 mod market;
 mod agent;
 #[cfg(test)]
-mod agent_market_tests;
+mod test;
 
 fn version() -> String {
   format!( "{}.{}.{}", env!( "CARGO_PKG_VERSION_MAJOR" )
