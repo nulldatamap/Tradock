@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use market::{Money, Count};
 
+#[deriving(Show)]
 pub struct Agent {
   pub name   : String,
   pub funds  : Money,

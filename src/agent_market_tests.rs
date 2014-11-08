@@ -83,7 +83,6 @@ fn not_enough_funds_enough_assets_buy() {
 fn enough_assets_sell() {
   let (mut ma, mut ag) = setup( 10, 10. );
   assert_eq!( ma.buy_assets( &mut ag, 2 ), Ok( () ) );
-
   // Make sure the user can sell, when they have the assests
   assert_eq!( ma.sell_assets( &mut ag, 1 ), Ok( () ) );
   assert_eq!( ma.assets, 9 );
@@ -136,9 +135,11 @@ fn test_recalculation() {
   assert_eq!( ma.sell_assets( &mut ag, 1 ), Ok( () ) );
   assert_eq!( ma.sell_assets( &mut ag, 1 ), Ok( () ) );
   
+  // Make sure that the market has grown by a 100%
   ma.recalculate_price();
 
   assert_eq!( ma.buys, 0 );
   assert_eq!( ma.sells, 0 );
-  assert_eq!( ma.price, 13.333333333333332 );
+  assert_eq!( ma.price, 20. );
+  assert_eq!( ma.holders, 2 );
 }
