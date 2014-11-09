@@ -12,7 +12,6 @@ pub struct Market {
   pub buys    : Count,
   pub sells   : Count,
   pub holders : Count,
-  pub price_factor : f64
 }
 
 #[deriving(Eq, PartialEq, Show)]
@@ -25,13 +24,12 @@ pub enum Failure {
 impl Market {
   
   pub fn new( name : String, starting_price : Money
-            , starting_asset_count : Count, price_factor : f64 )
+            , starting_asset_count : Count )
               -> Market {
     
     Market{ name: name, price: starting_price
           , assets: starting_asset_count
-          , buys: 0, sells: 0, holders: 1
-          , price_factor: price_factor }
+          , buys: 0, sells: 0, holders: 1 }
   }
 
   pub fn buy_assets( &mut self, agent : &mut Agent, amount : Count )

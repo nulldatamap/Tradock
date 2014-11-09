@@ -4,7 +4,7 @@ use market::{Count, Money, InsufficientAgentFunds, Market
 use agent::{Agent};
 
 fn setup( m_assets : Count, m_price : Money ) -> (Market, Agent) {
-  ( Market::new( "Test Market".to_string(), m_price, m_assets, 0. )
+  ( Market::new( "Test Market".to_string(), m_price, m_assets )
   , Agent::new( "Test Agent".to_string(), 100. ) )
 }
 
