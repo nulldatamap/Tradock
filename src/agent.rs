@@ -28,7 +28,7 @@ impl Agent {
       // mutable borrow: `self.assets.find_mut( market )`
       None => {}
     }
-    // Now that `self.assets` isn't mutuably borrowed we can
+    // Now that `self.assets` isn't mutably borrowed we can
     // do an `.insert` on it without making the borrow checker sad.
     self.assets.insert( market.clone(), amount );
   }

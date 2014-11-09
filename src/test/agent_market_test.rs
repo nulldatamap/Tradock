@@ -12,7 +12,7 @@ fn setup( m_assets : Count, m_price : Money ) -> (Market, Agent) {
 // Make sure that buying works as intended.
 fn enough_funds_enough_assets_buy() {
   let (mut ma, mut ag) = setup( 10, 10. );
-  // A normal buy ( with an inital insert in the agents assets )
+  // A normal buy ( with an initial insert in the agents assets )
   assert_eq!( ma.buy_assets( &mut ag, 1 ), Ok( () ) );
   assert_eq!( ma.assets, 9 );
   assert_eq!( ma.buys, 1 );
@@ -83,7 +83,7 @@ fn not_enough_funds_enough_assets_buy() {
 fn enough_assets_sell() {
   let (mut ma, mut ag) = setup( 10, 10. );
   assert_eq!( ma.buy_assets( &mut ag, 2 ), Ok( () ) );
-  // Make sure the user can sell, when they have the assests
+  // Make sure the user can sell, when they have the assets
   assert_eq!( ma.sell_assets( &mut ag, 1 ), Ok( () ) );
   assert_eq!( ma.assets, 9 );
   assert_eq!( ma.buys, 2 );
@@ -128,7 +128,7 @@ fn not_enough_assets_sell() {
 }
 
 #[test]
-// Make sure the recalculation of the price behaives as intended
+// Make sure the recalculation of the price behaves as intended
 fn test_recalculation() {
   let (mut ma, mut ag) = setup( 10, 10. );
   assert_eq!( ma.buy_assets( &mut ag, 3 ), Ok( () ) );
