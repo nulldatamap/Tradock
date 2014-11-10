@@ -13,6 +13,8 @@
 */
 
 // &Interface - a pointer to the state of your interface
+
+/// All the data structures below are defined in `interface.h`
 // Action - an action by the user ( buy, sell, pass, etc. )
 // Response - a reponse from the game about how it handled the user's action
 // vector<&const MarketData> - A list of the collected data from the different markets
@@ -38,7 +40,7 @@ Action get_user_action( &Interface );
 // Returns: true if it accepts it, false if it wants to redo the user action
 bool handle_response( &Interface, Response );
 
-/// Defined by the game, called by the interface
+/// Defined by the game, called by the interface ( from `interface.h` )
 
 // Get's all the data from all the markets ( should be called each turn )
 vector<&const MarketData> get_market_data();
