@@ -8,5 +8,5 @@ Tradock is a game about trading in a lively economy. You'll start out with some 
 
 ## Secondary goals
 * Events and outside context that drives the economy indirectly.
-* A 2D UI to play the game through as an alternative the console interface ( mock-up: ![mock-up](https://github.com/thebreadcat/Tradock/blob/master/mock-up.png "Tradock graphics style mock-up")
+* A 2D UI to play the game through as an alternative the console interface ( mock-up: ![mock-up](https://github.com/thebreadcat/Tradock/blob/master/docs/mock-up.png "Tradock graphics style mock-up")
  ).
