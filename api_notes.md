@@ -20,6 +20,12 @@
 
 /// Defined by the interface, called by the game
 
+// Creates the interface
+&Interface create_interface();
+
+// Destroys the interface
+void destroy_interface( &Interface );
+
 // Called by the game in order to render the information the user needs each turn
 // Returns: true if the function succeeded, false if it failed
 bool render_market_data( &Interface );
@@ -33,12 +39,6 @@ Action get_user_action( &Interface );
 bool handle_response( &Interface, Response );
 
 /// Defined by the game, called by the interface
-
-// Creates the interface
-&Interface create_interface();
-
-// Destroys the interface
-void destroy_interface( &Interface );
 
 // Get's all the data from all the markets ( should be called each turn )
 vector<&const MarketData> get_market_data();
