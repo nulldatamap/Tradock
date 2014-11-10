@@ -34,6 +34,12 @@ bool handle_response( &Interface, Response );
 
 /// Defined by the game, called by the interface
 
+// Creates the interface
+&Interface create_interface();
+
+// Destroys the interface
+void destroy_interface();
+
 // Get's all the data from all the markets ( should be called each turn )
 vector<&const MarketData> get_market_data();
 
