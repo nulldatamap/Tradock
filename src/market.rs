@@ -1,5 +1,6 @@
 
 use agent::Agent;
+use market_data::MarketData;
 
 pub type Money = f64;
 pub type Count = u32;
@@ -12,6 +13,7 @@ pub struct Market {
   pub buys    : Count,
   pub sells   : Count,
   pub holders : Count,
+  pub data    : MarketData
 }
 
 #[deriving(Eq, PartialEq, Show)]
@@ -27,7 +29,8 @@ impl Market {
             , starting_asset_count : Count )
               -> Market {
     
-    Market{ name: name, price: starting_price
+    Market{ name: name.clone(), price: starting_price
+          , data: MarketData::new( name, default_time_frame() )
           , assets: starting_asset_count
           , buys: 0, sells: 0, holders: 1 }
   }
@@ -83,4 +86,18 @@ impl Market {
     self.sells = 0;
   }
 
+  pub fn current_data( &self ) -> ( Count, Money, Count ) {
+    ( self.assets, self.price, self.holders )
+  }
+
+  pub fn next_day( &mut self ) {
+    self.recalculate_price();
+    let cd = self.current_data();
+    self.data.collect( cd );
+  }
+
+}
+
+fn default_time_frame() -> Count {
+  365
 }

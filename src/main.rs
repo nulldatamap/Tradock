@@ -5,7 +5,9 @@ use std::rand::random;
 use market::{Market, Count};
 use agent::Agent;
 
+mod circularbuf;
 mod market;
+mod market_data;
 mod agent;
 #[cfg(test)]
 mod test;
