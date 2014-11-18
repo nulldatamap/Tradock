@@ -24,7 +24,9 @@ fn version() -> String {
 } 
 
 fn display_market( m : &Market ) {
-  println!( "{}:\n{} x ${} ( by {} )\n${}", m.name, m.assets, m.price, m.holders, m.assets as Money * m.price );
+  println!( "{}:\n{} x ${} ( by {} )\n${}", m.name, m.assets
+                                          , m.price, m.holders
+                                          , m.assets as Money * m.price );
 }
 
 fn make_random_ai() -> ai::AI {
