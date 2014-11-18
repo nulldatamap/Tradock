@@ -38,12 +38,15 @@ impl<T> CircularBuf<T> {
     self.capacity
   }
 
-  pub fn front( &self ) -> &T {
-    if self.items.len() == self.capacity {
+  pub fn front( &self ) -> Option<&T> {
+    if self.items.len() == 0 {
+      return None
+    }
+    Some( if self.items.len() == self.capacity {
       &self.items[self.head]
     } else {
       &self.items[self.items.len() - 1]
-    }
+    } )
   }
 
 }
