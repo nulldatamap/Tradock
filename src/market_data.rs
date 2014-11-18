@@ -4,12 +4,12 @@ use market::{Count, Money, Market};
 
 #[deriving(Show)]
 pub struct MarketData {
-  name : String,
-  time_frame : Count,
-  day_count : Count,
-  asset_history : CircularBuf<Count>,
-  price_history : CircularBuf<Money>,
-  holders_history : CircularBuf<Count>
+  pub name : String,
+  pub time_frame : Count,
+  pub day_count : Count,
+  pub asset_history : CircularBuf<Count>,
+  pub price_history : CircularBuf<Money>,
+  pub holders_history : CircularBuf<Count>
 }
 
 impl MarketData {
