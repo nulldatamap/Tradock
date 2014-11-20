@@ -6,7 +6,7 @@ use std::time::Duration;
 
 use market::{Market, Count, Money};
 use agent::Agent;
-use action::{Action, Buy, Sell, Pass};
+use action::Action::{Buy, Sell, Pass};
 
 mod circularbuf;
 mod market;
@@ -14,6 +14,7 @@ mod market_data;
 mod agent;
 mod action;
 mod ai;
+mod interface;
 #[cfg(test)]
 mod test;
 

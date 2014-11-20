@@ -1,6 +1,7 @@
 
 use market::{Count, Money};
-use action::{Action, Buy, Sell, Pass};
+use action::Action;
+use action::Action::{Buy, Sell, Pass};
 use market_data::MarketData;
 use agent::Agent;
 

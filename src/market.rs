@@ -1,6 +1,9 @@
 
 use agent::Agent;
 use market_data::MarketData;
+use self::Failure::{InsufficientAgentAssets
+                   , InsufficientAgentFunds
+                   , InsufficientMarketAssets};
 
 pub type Money = f64;
 pub type Count = u32;
