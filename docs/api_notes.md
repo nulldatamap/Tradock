@@ -29,16 +29,16 @@
 void destroy_interface( &Interface );
 
 // Called by the game in order to render the information the user needs each turn
-// Returns: true if the function succeeded, false if it failed
-bool render_market_data( &Interface );
+// Returns: true(1) if the function succeeded, false(0) if it failed
+Action render_market_data( &Interface );
 
 // Called by the game in order to get input from the user
 // Returns: an action for the user to do
 Action get_user_action( &Interface );
 
 // Called by the game to make the interface to handle the game's response
-// Returns: true if it accepts it, false if it wants to redo the user action
-bool handle_response( &Interface, Response );
+// Returns: true(1) if it accepts it, false(0) if it wants to redo the user action
+int handle_response( &Interface, Response );
 
 /// Defined by the game, called by the interface ( from `interface.h` )
 

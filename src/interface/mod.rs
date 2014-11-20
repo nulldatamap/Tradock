@@ -1,7 +1,11 @@
 use action::Action;
 use market::Failure;
 
-type Response = Result<(), Failure>;
+pub use interface::console::ConsoleInterface;
+
+mod console;
+
+pub type Response = Result<(), Failure>;
 
 // TODO: When they fix associated types, change IError to be a associated type
 pub trait Interface<E> {
