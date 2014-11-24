@@ -2,7 +2,8 @@
 // This is an incomplete datastructure where only the needed 
 // methods will be implemented for the time being.
 
-#[deriving(Show)]
+#[deriving(Show, Clone)]
+#[repr(C)]
 pub struct CircularBuf<T> {
   items : Vec<T>,
   head : uint,

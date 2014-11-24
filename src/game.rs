@@ -3,9 +3,14 @@ use std::io::timer::sleep;
 use std::time::Duration;
 
 use market::{Market, Count, Money};
+use market_data::MarketData;
 use agent::Agent;
 use action::Action::{Buy, Sell, Pass};
 use ai;
+
+struct Game {
+  market : Vec<Market>,
+}
 
 fn display_market( m : &Market ) {
   println!( "{}:\n{} x ${} ( by {} )\n${}", m.name, m.assets

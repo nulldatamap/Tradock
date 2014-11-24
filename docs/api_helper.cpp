@@ -15,7 +15,7 @@ extern void destroy_interface( Interface* iface ) {
 
 
 extern Action render_market_data( Interface* self
-                                , MarketData data
+                                , vector<MarketData> data
                                 , Agent agent ) {
   // If the rendering goes well
   if( 1 == 1 ) {
@@ -27,7 +27,7 @@ extern Action render_market_data( Interface* self
 }
 
 extern Action get_user_action( Interface* self
-                             , MarketData data
+                             , vector<MarketData> data
                              , Agent agent ) {
   // If everything goes well, return a vector of
   // buys/sells/passes in the same order as the
