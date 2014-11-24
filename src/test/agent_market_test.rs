@@ -1,6 +1,8 @@
 
-use market::{Count, Money, InsufficientAgentFunds, Market
-            , InsufficientMarketAssets, InsufficientAgentAssets};
+use market::{Count, Money, Market};
+use market::Failure::{InsufficientAgentFunds
+                     , InsufficientMarketAssets
+                     , InsufficientAgentAssets};
 use agent::{Agent};
 
 fn setup( m_assets : Count, m_price : Money ) -> (Market, Agent) {
