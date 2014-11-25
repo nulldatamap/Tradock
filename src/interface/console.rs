@@ -11,7 +11,8 @@ use interface::{Interface, Response};
 
 */
 
-use self::ffi::{CActionKind, CResponse, CAction, CPair, CMarketData, CAgent};
+use self::ffi::{CActionKind, CResponse, CAction
+               , CPair, CMarketData, CAgent, CVec};
 
 mod ffi {
   use market_data::MarketData;
@@ -149,11 +150,11 @@ mod ffi {
   extern "C" {
     pub fn create_interface() -> RawInterface;
     pub fn destroy_interface( ri : RawInterface );
-    pub fn render_market_data( ri : RawInterface, md : Vec<CMarketData>, ag : CAgent )
+    pub fn render_market_data( ri : RawInterface, md : CVec<CMarketData>, ag : CAgent )
                                -> CAction;
-    pub fn get_user_action( ri : RawInterface, md : Vec<CMarketData>, ag : CAgent )
+    pub fn get_user_action( ri : RawInterface, md : CVec<CMarketData>, ag : CAgent )
                             -> CAction;
-    pub fn handle_response( ri : RawInterface, rs : Vec<CPair<CResponse>> ) -> CAction;
+    pub fn handle_response( ri : RawInterface, rs : CVec<CPair<CResponse>> ) -> CAction;
   }
 }
 
@@ -187,7 +188,7 @@ impl Interface<String> for ConsoleInterface {
                       .map( |&md| CMarketData::from_market_data( md ) )
                       .collect();
       result = ffi::render_market_data( self.raw_interface
-                                      , cdata
+                                      , CVec::from_vec( cdata )
                                       , CAgent::from_agent( agent ) );
     }
     match result.kind {
@@ -211,7 +212,7 @@ impl Interface<String> for ConsoleInterface {
                       .map( |&md| CMarketData::from_market_data( md ) )
                       .collect();
       result = ffi::get_user_action( self.raw_interface
-                                   , cdata
+                                   , CVec::from_vec( cdata )
                                    , CAgent::from_agent( agent ) );
     }
     match result.kind {
@@ -243,7 +244,8 @@ impl Interface<String> for ConsoleInterface {
                           value: CResponse::from_response( v )
                         } ).collect();
     unsafe {
-      result = ffi::handle_response( self.raw_interface, responses );
+      result = ffi::handle_response( self.raw_interface
+                                   , CVec::from_vec( responses ) );
     }
     match result.kind {
       CActionKind::Ok => {
