@@ -48,7 +48,7 @@ mod ffi {
     }
 
     pub fn to_vec( &self ) -> Vec<T> {
-      let len = self.end.to_uint() - self.start.to_uint();
+      let len = self.start.to_uint() - self.end.to_uint();
       unsafe {
         Vec::from_raw_parts( self.start, len, len )
       }
