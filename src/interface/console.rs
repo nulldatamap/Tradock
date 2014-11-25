@@ -23,7 +23,37 @@ mod ffi {
 
   pub type RawInterface = *mut ();
   type RawString = *const i8;
-  
+    
+  #[repr(C)]
+  pub struct CVec<T> {
+    start : *mut T,
+    end : *mut T,
+    storage : *mut T
+  }
+
+  impl<T> CVec<T> {
+    pub fn from_vec( mut vec : Vec<T> ) -> CVec<T> {
+      let datas;
+      let datae;
+      unsafe {
+        datas = vec.as_mut_ptr();
+        datae = datas.offset( vec.len() as int );
+      }
+      CVec {
+        start: datas,
+        end: datae,
+        storage: datae
+      }
+    }
+
+    pub fn to_vec( &self ) -> Vec<T> {
+      let len = self.end.to_uint() - self.start.to_uint();
+      unsafe {
+        Vec::from_raw_parts( self.start, len, len )
+      }
+    }
+  }
+
   #[deriving(Show)]
   #[repr(C)]
   pub enum CActionKind {
@@ -35,7 +65,7 @@ mod ffi {
   #[repr(C)]
   pub struct CAction {
     pub kind : CActionKind,
-    pub amounts : Vec<i32>,
+    pub amounts : CVec<i32>,
     pub failure : Option<&'static str>
   }
 
@@ -78,7 +108,7 @@ mod ffi {
   pub struct CAgent {
     pub name : RawString,
     pub funds : c_double,
-    pub assets : Vec<CPair<u32>>
+    pub assets : CVec<CPair<u32>>
   }
 
   impl CAgent {
@@ -91,7 +121,7 @@ mod ffi {
 
       CAgent{ name: agent.name.to_c_str().as_ptr()
             , funds: agent.funds
-            , assets: assets }
+            , assets: CVec::from_vec( assets ) }
     } 
   }
 
@@ -186,7 +216,7 @@ impl Interface<String> for ConsoleInterface {
     }
     match result.kind {
       CActionKind::Ok => {
-        Ok( result.amounts.iter().map( |&x| {
+        Ok( result.amounts.to_vec().iter().map( |&x| {
           if x > 0 {
             Action::Buy( x as u32 )
           } else if x < 0 {

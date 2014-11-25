@@ -7,14 +7,16 @@ typedef unsigned int uint;
 
 template<typename T>
 struct CircularBuffer {
-  std::vector<T> items;
+  T* items;
+  uint data_length;
+  uint data_cap;
   uint head;
   uint capacity;
 };
 
 template<typename T>
 uint length( CircularBuffer<T> buf ) {
-  return buf.items.size();
+  return buf.data_length;
 }
 
 template<typename T>
