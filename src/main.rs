@@ -12,10 +12,9 @@ mod game;
 mod test;
 
 fn version() -> String {
-  /*format!( "{}.{}.{}", env!( "CARGO_PKG_VERSION_MAJOR" )
+  format!( "{}.{}.{}", env!( "CARGO_PKG_VERSION_MAJOR" )
                      , env!( "CARGO_PKG_VERSION_MINOR" )
-                     , env!( "CARGO_PKG_VERSION_PATCH" ) )*/
-  "[dummy version]".to_string()
+                     , env!( "CARGO_PKG_VERSION_PATCH" ) )
 } 
 
 fn main() {

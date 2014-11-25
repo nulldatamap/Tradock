@@ -37,6 +37,10 @@ pub fn start_game() {
                         , Market::new( "Icecream".to_string(), 0.3, 400 )
                         , Market::new( "Foodball players".to_string(), 23., 20 ) ];
   loop {
+    {
+      let mds = markets.iter().map( |x| &x.data ).collect();
+      interface.render_market_data( mds, agents_and_ai[0].ref0() );
+    }
     for market in markets.iter_mut() {
       for &(ref mut agent, ref ai) in agents_and_ai.iter_mut() {
         match ai.make_decision( &market.name, agent, &market.data ) {
@@ -46,8 +50,6 @@ pub fn start_game() {
         };
       }
       market.next_day();
-      let mds = markets.iter().map( |x| &x.data ).collect();
-      interface.render_market_data( mds, agents_and_ai[0].ref0() );
       sleep( Duration::milliseconds( 500 ) );
     }
     println!( "=======================" );

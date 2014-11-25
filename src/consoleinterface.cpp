@@ -56,7 +56,7 @@ Action get_user_action( Interface* self
 
 extern "C"
 Action handle_response( Interface* self, std::vector<Pair<Response>> resp ) {
-  if( resp == Success ) {
+  if( 1 == 1 ) {
     return { Ok };
   } else {
     // Let the user try that again
