@@ -68,11 +68,12 @@ enum Response {
   InsufficientAgentAssets
 };
 
+template<typename T>
 struct Pair {
   // The name of the market
   const char* key;
   // How much we got invested in that market
-  uint32_t value;
+  T value;
 };
 
 struct Agent {
@@ -80,7 +81,7 @@ struct Agent {
   const char* name;
   double funds;
   // His investments
-  std::vector<Pair> assets; 
+  std::vector<Pair<uint32_t>> assets;
 };
 
 struct MarketData {

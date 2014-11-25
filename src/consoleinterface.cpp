@@ -55,7 +55,7 @@ Action get_user_action( Interface* self
 }
 
 extern "C"
-Action handle_response( Interface* self, Response resp ) {
+Action handle_response( Interface* self, std::vector<Pair<Response>> resp ) {
   if( resp == Success ) {
     return { Ok };
   } else {

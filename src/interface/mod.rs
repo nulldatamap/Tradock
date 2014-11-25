@@ -13,6 +13,6 @@ pub type Response = Result<(), Failure>;
 pub trait Interface<E> {
   fn render_market_data( &mut self, Vec<&MarketData>, &Agent ) -> Result<(), E>;
   fn get_user_action( &mut self, Vec<&MarketData>, &Agent ) -> Result<Vec<Action>, E>;
-  fn handle_response( &mut self, Response ) -> Result<bool, E>;
+  fn handle_response( &mut self, Vec<(&str, Response)> ) -> Result<bool, E>;
 }
 

@@ -16,6 +16,8 @@ use self::ffi::{CActionKind, CResponse, CAction, CPair, CMarketData, CAgent};
 mod ffi {
   use market_data::MarketData;
   use agent::Agent;
+  use interface::Response;
+  use market::Failure;
   use circularbuf::CircularBuf;
   use libc::{c_int, c_double, uint32_t};
 
@@ -51,17 +53,32 @@ mod ffi {
     InsufficientAgentAssets
   }
 
+  impl CResponse {
+    pub fn from_response( resp : Response ) -> CResponse {
+      match resp {
+        Ok( () ) => CResponse::Success,
+        Err( fl ) => {
+          match fl {
+            Failure::InsufficientAgentAssets => CResponse::InsufficientAgentAssets,
+            Failure::InsufficientMarketAssets => CResponse::InsufficientMarketAssets,
+            Failure::InsufficientAgentFunds => CResponse::InsufficientAgentFunds
+          }
+        }
+      }
+    }
+  }
+
   #[repr(C)]
-  pub struct CPair {
+  pub struct CPair<T> {
     pub key : RawString,
-    pub value : uint32_t
+    pub value : T
   }
 
   #[repr(C)]
   pub struct CAgent {
     pub name : RawString,
     pub funds : c_double,
-    pub assets : Vec<CPair>
+    pub assets : Vec<CPair<u32>>
   }
 
   impl CAgent {
@@ -106,7 +123,7 @@ mod ffi {
                                -> CAction;
     pub fn get_user_action( ri : RawInterface, md : Vec<CMarketData>, ag : CAgent )
                             -> CAction;
-    pub fn handle_response( ri : RawInterface, rs : CResponse ) -> CAction;
+    pub fn handle_response( ri : RawInterface, rs : Vec<CPair<CResponse>> ) -> CAction;
   }
 }
 
@@ -188,20 +205,15 @@ impl Interface<String> for ConsoleInterface {
     }
   }
 
-  fn handle_response( &mut self, res : Response ) -> Result<bool, String> {
+  fn handle_response( &mut self, res : Vec<(&str, Response)> ) -> Result<bool, String> {
     let result;
-    let response = match res {
-      Ok( () ) => CResponse::Success,
-      Err( fl ) => {
-        match fl {
-          Failure::InsufficientAgentAssets => CResponse::InsufficientAgentAssets,
-          Failure::InsufficientMarketAssets => CResponse::InsufficientMarketAssets,
-          Failure::InsufficientAgentFunds => CResponse::InsufficientAgentFunds
-        }
-      }
-    };
+    let responses = res.iter()
+                       .map( |&(k, v)| CPair{
+                          key: k.to_c_str().as_ptr(),
+                          value: CResponse::from_response( v )
+                        } ).collect();
     unsafe {
-      result = ffi::handle_response( self.raw_interface, response );
+      result = ffi::handle_response( self.raw_interface, responses );
     }
     match result.kind {
       CActionKind::Ok => {

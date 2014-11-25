@@ -7,6 +7,7 @@ use market_data::MarketData;
 use agent::Agent;
 use action::Action::{Buy, Sell, Pass};
 use ai;
+use interface::{Interface, ConsoleInterface};
 
 struct Game {
   market : Vec<Market>,
@@ -26,6 +27,7 @@ fn make_random_ai() -> ai::AI {
 }
 
 pub fn start_game() {
+  let mut interface = ConsoleInterface::new();
   let mut agents_and_ai = Vec::new();
   for i in range( 0, 100u ) {
     agents_and_ai.push( ( Agent::new( format!( "agent#{}", i ), 100. )
@@ -44,7 +46,8 @@ pub fn start_game() {
         };
       }
       market.next_day();
-      display_market( market );
+      let mds = markets.iter().map( |x| &x.data ).collect();
+      interface.render_market_data( mds, agents_and_ai[0].ref0() );
       sleep( Duration::milliseconds( 500 ) );
     }
     println!( "=======================" );
