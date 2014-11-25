@@ -4,6 +4,7 @@ use std::os;
 
 fn main() {
   let out_dir = os::getenv( "OUT_DIR" ).unwrap();
+  let libraries = "-l consoleinterface:static -l stdc++:static";
 
   Command::new( "g++" ).args( &[ "src/consoleinterface.cpp"
                                , "-c", "-std=c++11", "-m64"
@@ -14,5 +15,5 @@ fn main() {
                               , "consoleinterface.o" ] )
                     .cwd( &Path::new( &out_dir ) )
                     .status().unwrap();
-  println!( "cargo:rustc-flags=-L {} -l consoleinterface:static -l stdc++:static", out_dir );
+  println!( "cargo:rustc-flags=-L {} {}", out_dir, libraries );
 }
