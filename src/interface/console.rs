@@ -4,6 +4,7 @@ use market::{Count, Failure};
 use market_data::MarketData;
 use agent::Agent;
 use interface::{Interface, Response};
+use circularbuf::CircularBuf;
 
 /*
   
@@ -21,6 +22,9 @@ mod ffi {
   use market::Failure;
   use circularbuf::CircularBuf;
   use libc::{c_int, c_double, uint32_t};
+  use std::mem::size_of;
+  use std::c_str::CString;
+  use std::str::from_c_str;
 
   pub type RawInterface = *mut ();
   type RawString = *const i8;
@@ -48,7 +52,7 @@ mod ffi {
     }
 
     pub fn to_vec( &self ) -> Vec<T> {
-      let len = self.start.to_uint() - self.end.to_uint();
+      let len = ( self.end.to_uint() - self.start.to_uint() ) / size_of::<T>();
       unsafe {
         Vec::from_raw_parts( self.start, len, len )
       }
@@ -67,12 +71,17 @@ mod ffi {
   pub struct CAction {
     pub kind : CActionKind,
     pub amounts : CVec<i32>,
-    pub failure : Option<&'static str>
+    pub failure : *const i8
   }
 
   impl CAction {
-    pub fn as_error( &self ) -> String {
-      self.failure.expect( "A non-null error message" ).to_string()
+    pub fn as_error( &self ) -> &'static str {
+      if self.failure.is_null() {
+        panic!( "Expected a non-null error message." );
+      }
+      unsafe {
+        from_c_str( self.failure )
+      }
     }
   }
   
@@ -113,16 +122,16 @@ mod ffi {
   }
 
   impl CAgent {
-    pub fn from_agent( agent : &Agent ) -> CAgent {
+    pub fn from_agent( agent : &Agent ) -> (CAgent, CString) {
       let mut assets = Vec::with_capacity( agent.assets.len() );
 
       for (market, &invst) in agent.assets.iter() {
         assets.push( CPair{ key: market.to_c_str().as_ptr(), value: invst } );
       }
-
-      CAgent{ name: agent.name.to_c_str().as_ptr()
+      let cname = agent.name.to_c_str();
+      (CAgent{ name: cname.as_ptr()
             , funds: agent.funds
-            , assets: CVec::from_vec( assets ) }
+            , assets: CVec::from_vec( assets ) }, cname)
     } 
   }
 
@@ -137,13 +146,14 @@ mod ffi {
   }
 
   impl CMarketData {
-    pub fn from_market_data( data : &MarketData ) -> CMarketData {
-      CMarketData{ name: data.name.to_c_str().as_ptr()
+    pub fn from_market_data( data : &MarketData ) -> (CMarketData, CString) {
+      let cname = data.name.to_c_str();
+      (CMarketData{ name: cname.as_ptr()
                  , time_frame: data.time_frame
                  , day_count: data.day_count
                  , asset_history: data.asset_history.clone()
                  , price_history: data.price_history.clone()
-                 , holders_history: data.holders_history.clone() }
+                 , holders_history: data.holders_history.clone() }, cname)
     }
   }
   
@@ -178,18 +188,24 @@ impl Drop for ConsoleInterface {
   }
 }
 
-impl Interface<String> for ConsoleInterface {
+impl Interface<&'static str> for ConsoleInterface {
 
   fn render_market_data( &mut self, data : Vec<&MarketData>, agent : &Agent )
-                         -> Result<(), String> {
+                         -> Result<(), &'static str> {
     let result;
     unsafe {
+      let mut cnames = Vec::new();
       let cdata = data.iter()
-                      .map( |&md| CMarketData::from_market_data( md ) )
+                      .map( |&md| {
+                        let (cdat, cnam) = CMarketData::from_market_data( md );
+                        cnames.push( cnam );
+                        cdat
+                      } )
                       .collect();
+      let (cagent, cname) = CAgent::from_agent( agent );
       result = ffi::render_market_data( self.raw_interface
                                       , CVec::from_vec( cdata )
-                                      , CAgent::from_agent( agent ) );
+                                      , cagent );
     }
     match result.kind {
       CActionKind::Ok => {
@@ -205,15 +221,21 @@ impl Interface<String> for ConsoleInterface {
   }
 
   fn get_user_action( &mut self, data : Vec<&MarketData>, agent : &Agent )
-                      -> Result<Vec<Action>, String> {
+                      -> Result<Vec<Action>, &'static str> {
     let result;
     unsafe {
+      let mut cnames = Vec::new();
       let cdata = data.iter()
-                      .map( |&md| CMarketData::from_market_data( md ) )
+                      .map( |&md| {
+                        let (cdat, cnam) = CMarketData::from_market_data( md );
+                        cnames.push( cnam );
+                        cdat
+                      } )
                       .collect();
+      let (cagent, cname) = CAgent::from_agent( agent );
       result = ffi::get_user_action( self.raw_interface
                                    , CVec::from_vec( cdata )
-                                   , CAgent::from_agent( agent ) );
+                                   , cagent );
     }
     match result.kind {
       CActionKind::Ok => {
@@ -236,7 +258,7 @@ impl Interface<String> for ConsoleInterface {
     }
   }
 
-  fn handle_response( &mut self, res : Vec<(&str, Response)> ) -> Result<bool, String> {
+  fn handle_response( &mut self, res : Vec<(&str, Response)> ) -> Result<bool, &'static str> {
     let result;
     let responses = res.iter()
                        .map( |&(k, v)| CPair{

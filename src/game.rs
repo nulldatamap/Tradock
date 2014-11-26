@@ -38,8 +38,10 @@ pub fn start_game() {
                         , Market::new( "Foodball players".to_string(), 23., 20 ) ];
   loop {
     {
-      let mds = markets.iter().map( |x| &x.data ).collect();
-      interface.render_market_data( mds, agents_and_ai[0].ref0() );
+      let mds : Vec<&MarketData> = markets.iter().map( |x| &x.data ).collect();
+      interface.render_market_data( mds.clone(), agents_and_ai[0].ref0() );
+      println!( "=> {}", interface.get_user_action( mds, agents_and_ai[0].ref0() ) );
+      println!( "<= {}", interface.handle_response( vec![] ) );
     }
     for market in markets.iter_mut() {
       for &(ref mut agent, ref ai) in agents_and_ai.iter_mut() {

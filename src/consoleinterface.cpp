@@ -27,15 +27,18 @@ void destroy_interface( Interface* iface ) {
 extern "C"
 Action render_market_data( Interface* self
                          , std::vector<MarketData> data
-                         , Agent agent ) {
-  // If the rendering goes well
-  if( 1 == 1 ) {
-    // Return Ok
-    return { Ok };
-  } else {
-    return { Failed, {}, "What went wrong!" };
-  } 
+                         , Agent _agent ) {
+  Agent agent = *(Agent*) (&data + 1); // U WOT M8?! Just leave it be
+
+  cout << agent.name << "\n";
+  return { Ok };
 }
+
+
+/*
+and fix strings ( Storing CString for longer )
+*/
+
 
 extern "C"
 Action get_user_action( Interface* self

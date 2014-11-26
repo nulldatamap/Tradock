@@ -3,48 +3,47 @@
 #include <vector>
 #include <stdint.h>
 
-typedef unsigned int uint;
-
 template<typename T>
-struct CircularBuffer {
+class CircularBuf {
+public:
   T* items;
-  uint data_length;
-  uint data_cap;
-  uint head;
-  uint capacity;
+private:
+  uint64_t cursor;
+  uint64_t _allocated;
+  uint64_t head;
+  uint64_t allocated;
+public:
+  uint64_t length() {
+    return this->cursor;
+  }
+
+  uint64_t capacity() {
+    return this->allocated;
+  }
+  
+  bool empty() {
+    return this->cursor == 0;
+  }
+
+  T get( uint64_t i ) {
+    if( this->length() == this->capacity() ) {
+      uint64_t reli = ( this->head + 1 + i ) % this->capacity();
+      return this->items[reli];
+    } else {
+      return this->items[i];
+    }
+  }
+  
+  T front() {
+    if( this->length() == this->capacity() ) {
+      return this->get( this->head );
+    } else {
+      return this->get( this->length() - 1 );
+    }
+  }
 };
 
-template<typename T>
-uint length( CircularBuffer<T> buf ) {
-  return buf.data_length;
-}
 
-template<typename T>
-uint capacity( CircularBuffer<T> buf ) {
-  return buf.capacity;
-}
-
-template<typename T>
-const T& get( CircularBuffer<T> buf, uint i ) {
-  if( length( buf ) == capacity( buf ) ) {
-    uint reli = ( buf.head + 1 + i ) % capacity( buf );
-    return buf.items[reli];
-  } else {
-    return buf.items[i];
-  }
-}
-
-template<typename T>
-const T& front( CircularBuffer<T> buf ) {
-  if( length( buf ) == 0 ) {
-    return (const T&)0;
-  }
-  if( length( buf ) == capacity( buf ) ) {
-    return get( buf, buf.head );
-  } else {
-    return get( buf, length( buf ) - 1 );
-  }
-}
 
 enum ActionKind {
   // If we didn't crash
@@ -94,11 +93,11 @@ struct MarketData {
   // How many days we're in
   uint32_t day_count;
   // The history of asset count
-  CircularBuffer<uint32_t> asset_history;
+  CircularBuf<uint32_t> asset_history;
   // The history of the worth of the stock
-  CircularBuffer<double> price_history;
+  CircularBuf<double> price_history;
   // The histroy of the amount of investors
-  CircularBuffer<uint32_t> holders_history;
+  CircularBuf<uint32_t> holders_history;
 };
 
 #endif
