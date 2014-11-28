@@ -22,6 +22,8 @@ impl MarketData {
               , holders_history: CircularBuf::new( tf ) }
   }
 
+  // Collects a set of data, asset count, price and holder count
+  // All boundled up in one 3-tuple.
   pub fn collect( &mut self, data : ( Count, Money, Count ) ) {
     let ( assets, price, holders ) = data;
     self.day_count += 1;

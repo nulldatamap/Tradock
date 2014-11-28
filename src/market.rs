@@ -38,6 +38,10 @@ impl Market {
           , buys: 0, sells: 0, holders: 1 }
   }
 
+
+  // Takes an agent, and the amount of assets to buy, and tries to buy
+  // then for the agent. This might fail though in variaous ways
+  // see `market::Failure` ( in this file ) if you want to see them.
   pub fn buy_assets( &mut self, agent : &mut Agent, amount : Count )
       -> Result<(), Failure> {
     
@@ -60,6 +64,10 @@ impl Market {
     Ok( () )
   }
 
+
+  // Takes an agent, the amount of assets to sell, and tries to sell
+  // them from the agent. This might fail though if the agent doesn't
+  // have the assets they are trying to sell.
   pub fn sell_assets( &mut self, agent : &mut Agent, amount : Count )
       -> Result<(), Failure> {
     
@@ -77,6 +85,8 @@ impl Market {
     Ok( () )
   }
 
+  // Recalculates the price for the day and resets it's counting mechanisms
+  // so it can calculate the growth acurately for next time.
   pub fn recalculate_price( &mut self ) {
     let prev_holders = self.holders as f64;
 
@@ -89,10 +99,13 @@ impl Market {
     self.sells = 0;
   }
 
+  // Get the current data from the market as a 3-tuple of
+  // the asset count, price of the stock and the amount of holders
   pub fn current_data( &self ) -> ( Count, Money, Count ) {
     ( self.assets, self.price, self.holders )
   }
 
+  // Recalculates the price and collects the data for the day
   pub fn next_day( &mut self ) {
     self.recalculate_price();
     let cd = self.current_data();

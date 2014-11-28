@@ -37,6 +37,11 @@ impl Game {
     }
   }
 
+  // Shows the user the information needed to make a decision
+  // Get input from the user
+  // Try to perform the action, and report back if it fails
+  // Update the markets and make the AI trade
+  // Repeat.
   fn start( mut self, interface : &mut Interface<&'static str> ) {
     // Collect inital market data
     for market in self.markets.iter_mut() {

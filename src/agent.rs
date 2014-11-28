@@ -15,6 +15,7 @@ impl Agent {
     Agent{ name: name, funds: starting_funds, assets: HashMap::new() }
   }
 
+  // Adds an asset to their collection of assets
   pub fn add_assets( &mut self, market : &String, amount : Count ) {
 
     match self.assets.find_mut( market ) {
@@ -33,6 +34,9 @@ impl Agent {
     self.assets.insert( market.clone(), amount );
   }
 
+  // Removes an asset from their collection.
+  // If the we try to remove more assets than the agent has
+  // return false, else true.
   pub fn remove_assets( &mut self, market : &String, amount : Count ) -> bool {
 
     match self.assets.find_mut( market ) {
