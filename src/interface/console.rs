@@ -3,7 +3,7 @@ use action::Action;
 use market::{Count, Failure};
 use market_data::MarketData;
 use agent::Agent;
-use interface::{Interface, Response};
+use interface::Interface;
 use circularbuf::CircularBuf;
 use game::Game;
 
@@ -17,17 +17,8 @@ impl ConsoleInterface {
 
 impl Interface<&'static str> for ConsoleInterface {
 
-  fn render_market_data( &mut self, handle : &Game )
-                         -> Result<(), &'static str> {
-    Err( "NÆH" )
-  }
-
-  fn get_user_action( &mut self, handle : &Game )
-                      -> Result<Vec<Action>, &'static str> {
-    Err( "NÆH" )
-  }
-
-  fn handle_response( &mut self, handle : &Game ) -> Result<bool, &'static str> {
+  fn user_turn( &mut self, game : &Game )
+                      -> Result<(), &'static str> {
     Err( "NÆH" )
   }
 

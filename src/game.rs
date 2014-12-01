@@ -53,7 +53,7 @@ impl Game {
       // We unwrap all the interface cases, since we assume that the
       // error is unrecoverable and therefor there's nothing left to do
       // other than report the error and start the panic process.
-      interface.render_market_data( &self ).unwrap();
+      interface.user_turn( &self ).unwrap();
     }
   } 
 
@@ -71,8 +71,6 @@ fn make_random_ai() -> ai::AI {
   ai::AI{ lowest_sell: low_bound
         , highest_buy: high_bound }
 }
-
-
 
 pub fn start_game() {
   let mut interface = ConsoleInterface::new();
