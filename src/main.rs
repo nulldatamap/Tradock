@@ -1,3 +1,4 @@
+#![feature(if_let)]
 extern crate libc;
 
 mod circularbuf;
