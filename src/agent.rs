@@ -18,7 +18,7 @@ impl Agent {
   // Adds an asset to their collection of assets
   pub fn add_assets( &mut self, market : &String, amount : Count ) {
 
-    match self.assets.find_mut( market ) {
+    match self.assets.get_mut( market ) {
       Some( asset_count ) => {
         *asset_count += amount;
         // return early so the the None case can work out without
@@ -39,7 +39,7 @@ impl Agent {
   // return false, else true.
   pub fn remove_assets( &mut self, market : &String, amount : Count ) -> bool {
 
-    match self.assets.find_mut( market ) {
+    match self.assets.get_mut( market ) {
       Some( asset_count ) => {
 
         if *asset_count < amount {

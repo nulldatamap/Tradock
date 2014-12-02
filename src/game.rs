@@ -1,13 +1,5 @@
-use std::rand::random;
-use std::io::timer::sleep;
-use std::time::Duration;
-use std::io::fs::File;
-use std::path::posix::Path;
-
-use market::{Market, Count, Money};
-use market_data::MarketData;
+use market::Market;
 use agent::Agent;
-use action::Action::{Buy, Sell, Pass};
 use ai::AI;
 use consoleinterface::ConsoleInterface;
 
@@ -22,15 +14,15 @@ pub struct Game {
 impl Game {
   fn new() -> Game {
     let mut agents_and_ai = Vec::new();
-    let mut player = Agent::new( "You".to_string(), 100. );
+    let player = Agent::new( "You".to_string(), 100. );
     for i in range( 0, 100u ) {
       let inital_funds = 100.; // Should be randomized
       agents_and_ai.push( ( Agent::new( format!( "agent#{}", i ), inital_funds )
                           , AI::make_random_ai( inital_funds ) ) );
     }
-    let mut markets = vec![ Market::new( "Coal".to_string(), 1.5, 1000 )
-                          , Market::new( "Icecream".to_string(), 0.3, 400 )
-                          , Market::new( "Foodball players".to_string(), 23., 20 ) ];
+    let markets = vec![ Market::new( "Coal".to_string(), 1.5, 1000 )
+                      , Market::new( "Icecream".to_string(), 0.3, 400 )
+                      , Market::new( "Foodball players".to_string(), 23., 20 ) ];
     Game {
       agents_and_ai: agents_and_ai,
       player: player,
@@ -61,12 +53,6 @@ impl Game {
     }
   } 
 
-}
-
-fn display_market( m : &Market ) {
-  println!( "{}:\n{} x ${} ( by {} )\n${}", m.name, m.assets
-                                          , m.price, m.holders
-                                          , m.assets as Money * m.price );
 }
 
 pub fn start_game() {

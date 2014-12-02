@@ -1,7 +1,5 @@
 
-use market::{Count, Money};
-use action::Action;
-use action::Action::{Buy, Sell, Pass};
+use market::{Money};
 use market::Market;
 use agent::Agent;
 use std::rand::random;
@@ -15,6 +13,13 @@ pub struct AI {
   inital_funds : Money
 }
 
+
+// Takes the given procentage and generates a boolean
+// with the specified chance of being true.
+fn random_chance( procentage : f64 ) -> bool {
+  random::<f64>() <= procentage
+}
+
 impl AI {
 
   pub fn make_random_ai( inital_funds : Money ) -> AI {
@@ -24,14 +29,18 @@ impl AI {
       , inital_funds: inital_funds }
   }
 
+  // Problems with the AI:
+  // * It's still quite dump
+  // * They only buy and sell one asset at a time
+  // * They don't buy and sell in a random order
   pub fn make_decision( &mut self, agent : &mut Agent, markets : &mut Vec<Market> ) {
     // A 10% chance that we won't trade today at all
-    if random::<f64>() > 0.90 {
+    if random_chance( 0.90 ) {
       return
     }
     for market in markets.iter_mut() {
       // A 10% chance that we won't even consider trading on this market today
-      if random::<f64>() > 0.90 {
+      if random_chance( 0.90 ) {
         continue
       }
       // Get the how many assets we have in the current market
@@ -46,11 +55,11 @@ impl AI {
         // How likely are we to buy it ( in % ), do to our threshhold?
         let sell_chance = self.low_threshhold / gain;
         // Roll the dice
-        if random::<f64>() <= sell_chance {
+        if random_chance( sell_chance ) {
           // Re-adjust our investment stats
           self.invested -= market.price;
           // And sell the assets
-          market.sell_assets( agent, 1 );
+          let _ = market.sell_assets( agent, 1 );
           println!( "{}: Sold some {}", agent.name, market.name );
           // We'll just skip to the next market, because it doesn't
           // make sense to buy from a market we just sold from.
@@ -66,11 +75,11 @@ impl AI {
       // Find out how likely we are to buy it, based our threshhold
       let buy_chance = self.high_threshhold / price_scale;
       // Roll the dice once more
-      if random::<f64>() <= buy_chance {
+      if random_chance( buy_chance ) {
         // Remember our investment
         self.invested += market.price;
         // And buy the actual stock
-        market.buy_assets( agent, 1 );
+        let _ = market.buy_assets( agent, 1 );
         println!( "{}: Bough some {}", agent.name, market.name );
       }
     }

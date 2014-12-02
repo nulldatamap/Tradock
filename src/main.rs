@@ -5,7 +5,6 @@ mod circularbuf;
 mod market;
 mod market_data;
 mod agent;
-mod action;
 mod ai;
 mod consoleinterface;
 mod game;

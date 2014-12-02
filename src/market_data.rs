@@ -1,6 +1,6 @@
 
 use circularbuf::CircularBuf;
-use market::{Count, Money, Market};
+use market::{Count, Money};
 
 #[deriving(Show)]
 pub struct MarketData {
