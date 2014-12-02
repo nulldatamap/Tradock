@@ -18,8 +18,8 @@ impl ConsoleInterface {
 impl Interface<&'static str> for ConsoleInterface {
 
   fn user_turn( &mut self, game : &Game )
-                      -> Result<(), &'static str> {
-    Err( "NÆH" )
+                      -> Result<bool, &'static str> {
+    Ok( true )
   }
 
 }

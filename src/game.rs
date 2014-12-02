@@ -8,13 +8,13 @@ use market::{Market, Count, Money};
 use market_data::MarketData;
 use agent::Agent;
 use action::Action::{Buy, Sell, Pass};
-use ai;
+use ai::AI;
 use interface::{Interface, ConsoleInterface};
 
 pub type ContextHandle<'a> = &'a Game;
 
 pub struct Game {
-  pub agents_and_ai : Vec<( Agent, ai::AI )>,
+  pub agents_and_ai : Vec<( Agent, AI )>,
   pub player : Agent,
   pub markets : Vec<Market>,
 }
@@ -24,8 +24,9 @@ impl Game {
     let mut agents_and_ai = Vec::new();
     let mut player = Agent::new( "You".to_string(), 100. );
     for i in range( 0, 100u ) {
-      agents_and_ai.push( ( Agent::new( format!( "agent#{}", i ), 100. )
-                          , make_random_ai() ) );
+      let inital_funds = 100.; // Should be randomized
+      agents_and_ai.push( ( Agent::new( format!( "agent#{}", i ), inital_funds )
+                          , AI::make_random_ai( inital_funds ) ) );
     }
     let mut markets = vec![ Market::new( "Coal".to_string(), 1.5, 1000 )
                           , Market::new( "Icecream".to_string(), 0.3, 400 )
@@ -47,13 +48,16 @@ impl Game {
     for market in self.markets.iter_mut() {
       market.next_day();
     }
-    
-    // Main game loop
-    loop {
-      // We unwrap all the interface cases, since we assume that the
-      // error is unrecoverable and therefor there's nothing left to do
-      // other than report the error and start the panic process.
-      interface.user_turn( &self ).unwrap();
+        
+    while interface.user_turn( &self ).unwrap() {
+
+      for &(ref mut agent, ref mut ai) in self.agents_and_ai.iter_mut() {
+        ai.make_decision( agent, &mut self.markets );
+      }
+
+      for market in self.markets.iter_mut() {
+        market.next_day();
+      }
     }
   } 
 
@@ -63,13 +67,6 @@ fn display_market( m : &Market ) {
   println!( "{}:\n{} x ${} ( by {} )\n${}", m.name, m.assets
                                           , m.price, m.holders
                                           , m.assets as Money * m.price );
-}
-
-fn make_random_ai() -> ai::AI {
-  let low_bound = 1. + ( random::<Money>() * 50. );
-  let high_bound = low_bound + ( random::<Money>() * 100000. );
-  ai::AI{ lowest_sell: low_bound
-        , highest_buy: high_bound }
 }
 
 pub fn start_game() {
