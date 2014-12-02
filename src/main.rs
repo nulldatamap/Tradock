@@ -6,7 +6,7 @@ mod market_data;
 mod agent;
 mod action;
 mod ai;
-mod interface;
+mod consoleinterface;
 mod game;
 #[cfg(test)]
 mod test;

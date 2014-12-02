@@ -9,7 +9,7 @@ use market_data::MarketData;
 use agent::Agent;
 use action::Action::{Buy, Sell, Pass};
 use ai::AI;
-use interface::{Interface, ConsoleInterface};
+use consoleinterface::ConsoleInterface;
 
 pub type ContextHandle<'a> = &'a Game;
 
@@ -43,7 +43,7 @@ impl Game {
   // Try to perform the action, and report back if it fails
   // Update the markets and make the AI trade
   // Repeat.
-  fn start( mut self, interface : &mut Interface<&'static str> ) {
+  fn start( mut self, interface : ConsoleInterface ) {
     // Collect inital market data
     for market in self.markets.iter_mut() {
       market.next_day();
@@ -70,6 +70,5 @@ fn display_market( m : &Market ) {
 }
 
 pub fn start_game() {
-  let mut interface = ConsoleInterface::new();
-  Game::new().start( &mut interface );
+  Game::new().start( ConsoleInterface::new() );
 }
