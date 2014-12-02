@@ -43,7 +43,7 @@ impl Game {
   // Try to perform the action, and report back if it fails
   // Update the markets and make the AI trade
   // Repeat.
-  fn start( mut self, interface : ConsoleInterface ) {
+  fn start( mut self, mut interface : ConsoleInterface ) {
     // Collect inital market data
     for market in self.markets.iter_mut() {
       market.next_day();
