@@ -14,7 +14,7 @@ pub struct Game {
 impl Game {
   fn new() -> Game {
     let mut agents_and_ai = Vec::new();
-    let player = Agent::new( "You".to_string(), 100. );
+    let player = Agent::new( "You".to_string(), 10000. );
     for i in range( 0, 100u ) {
       let inital_funds = 100.; // Should be randomized
       agents_and_ai.push( ( Agent::new( format!( "agent#{}", i ), inital_funds )
