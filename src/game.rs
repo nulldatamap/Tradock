@@ -73,7 +73,7 @@ impl Game {
       // Bots start with between 100 DKK to 1000000 DKK
       let inital_funds = 100. + 999900. * random();
       agents_and_ai.push( ( Agent::new( format!( "agent#{}", i ), inital_funds )
-                          , AI::make_random_ai( inital_funds ) ) );
+                          , AI::make_random_ai() ) );
     }
     Game {
       agents_and_ai: agents_and_ai,

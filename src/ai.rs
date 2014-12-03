@@ -24,12 +24,11 @@ fn random_chance( procentage : f64 ) -> bool {
 
 impl AI {
 
-  pub fn make_random_ai( inital_funds : Money ) -> AI {
+  pub fn make_random_ai() -> AI {
     AI{ low_threshold: 2.2 * random()
       , high_threshold: 0.75 * random()
       , invested: 0.
-      , riskiness: 1. + 10. * random()
-      , inital_funds: inital_funds }
+      , riskiness: 1. + 10. * random() }
   }
 
   pub fn make_decision( &mut self, agent : &mut Agent, markets : &mut Vec<Market> ) {
