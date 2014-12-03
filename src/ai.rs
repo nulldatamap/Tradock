@@ -1,14 +1,17 @@
+use std::rand::random;
+use std::num::Float;
+
+use randorditer::random_order;
 use market::{Money};
 use market::Market;
 use agent::Agent;
-use std::rand::random;
-use randorditer::random_order;
 
 pub struct AI {
   // The lowest we sell
   low_threshold : f64,
   // The highest we buy
   high_threshold : f64,
+  riskiness : f64,
   invested : Money,
   inital_funds : Money
 }
@@ -25,16 +28,10 @@ impl AI {
     AI{ low_threshold: 2.2 * random()
       , high_threshold: 0.75 * random()
       , invested: 0.
+      , riskiness: 1. + 10. * random()
       , inital_funds: inital_funds }
   }
 
-  // Problems with the AI:
-  // * It's still quite dump
-  // * They only buy and sell one asset at a time
-  // * They don't buy and sell in a random order
-
-  // The only buying and selling one asset at a time thing might not be a
-  // problem when we got so many bots trading at the same time.
   pub fn make_decision( &mut self, agent : &mut Agent, markets : &mut Vec<Market> ) {
     // A 10% chance that we won't trade today at all
     if random_chance( 0.10 ) {
@@ -57,8 +54,9 @@ impl AI {
         if random_chance( sell_chance ) {
           // Re-adjust our investment stats
           self.invested -= market.price;
-          // And sell the assets
-          let _ = market.sell_assets( agent, 1 );
+          // And sell at least 1 asset
+          let amount = (random::<f64>() * assets).floor() as u32 + 1;
+          let _ = market.sell_assets( agent, amount );
           // We'll just skip to the next market, because it doesn't
           // make sense to buy from a market we just sold from.
           continue;
@@ -76,8 +74,12 @@ impl AI {
       if random_chance( buy_chance ) {
         // Remember our investment
         self.invested += market.price;
-        // And buy the actual stock
-        let _ = market.buy_assets( agent, 1 );
+        let investment_price_limit = agent.funds * self.high_threshold;
+        // And buy at least between 1 and the amount of assets
+        // our investment limit price can buy us times the AIs riskiness
+        let amount = ( market.price / investment_price_limit * random::<f64>()
+                                    * self.riskiness ).floor() as u32 + 1;
+        let _ = market.buy_assets( agent, amount );
       }
     }
   }
