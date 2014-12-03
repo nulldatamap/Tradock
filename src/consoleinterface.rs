@@ -2,6 +2,7 @@ use std::io::stdio::{StdReader, stdin};
 use std::io::BufferedReader;
 use std::ascii::AsciiExt;
 
+use market::Failure::{InsufficientAgentFunds, InsufficientMarketAssets, InsufficientAgentAssets};
 use market::{Count, Failure, Market};
 use market_data::MarketData;
 use agent::Agent;
@@ -12,7 +13,7 @@ pub struct ConsoleInterface {
   input : BufferedReader<StdReader>
 }
 
-fn render_market_data( player : &Agent, market : &Market ) {
+fn render_market_data( player : &Agent, market : &mut Market ) {
   println!( "Stats for: {}", market.name );
   println!( "Day: {}", market.data.day_count );
   println!( "Price per. asset: {:.2} DKK", market.price );
@@ -82,43 +83,64 @@ impl ConsoleInterface {
                                          .collect();
       match slices.as_slice() {
         [ "buy", amount, name ] => {
-          if let Some( x ) = from_str::<Count>( amount ) {
-            println!( "You buy {} things!", x );  
-          } else {
+         if let Some( buy_market ) = self.find_market( name, &mut game.markets ) {
+           if let Some( x ) = from_str::<Count>( amount ) {
+              match buy_market.buy_assets( &mut game.player, x ) {
+                Err( InsufficientAgentFunds) => {
+                  println!( "Not enough money" );
+                },
+                Err( InsufficientMarketAssets) => {
+                  println!( "Not enough market assets" );
+                },
+                _ => {
+                  println!( "You buy {} {} for {:.2} DKK", x, name, x as f64 * buy_market.price);
+                  println!( "Your current funds: {} DKK", game.player.funds );
+                }
+               } 
+           } else {
             println!( "'{}' is not a number you dummy!", amount );
           }
-          if let Some( buy_market ) = self.find_market( name, &mut game.markets ) {
-            buy_market.buy_assets( &mut game.player, 10);
-            println!( "Wow such market named: {}", buy_market.name );
-            println!( "Your current funds: {} DKK", game.player.funds);
-          } else {
-            println!( "No market named: {}", name );
-          }
+        } else {
+          println!( "No market named: {}", name );
+        }
         },
         [ "sell", amount, name ] => {
-          if let Some( x ) = from_str::<Count>( amount ) {
-            println!( "You sell {} things!", x);
-          } else {
-            println!( "'{}' is not a number you dummy!", amount);
-          }
           if let Some( sell_market ) = self.find_market( name, &mut game.markets) {
-            sell_market.sell_assets( &mut game.player, 10);
-            println!( "Wow such market named: {}", sell_market.name );
-            println!( "Your current funds: {} DKK", game.player.funds);
-          } else {
-            println!( "No market named: {}", name );
+            if let Some( x ) = from_str::<Count>( amount ) {
+               match sell_market.sell_assets( &mut game.player, x ) {
+                Err( InsufficientAgentAssets ) => {
+                  println!( "You don't have enough assets of {} to sell", name);
+                },
+                _ => {
+                  println!( "You sell {} {} for {:.2} DKK", x, name, x as f64 * sell_market.price);
+                  println!( "Your current funds: {} DKK", game.player.funds );
+                }
+               }
+            } else {
+             println!( "'{}' is not a number you dummy!", amount);
+          }
+        } else {
+          println!( "No market named: {}", name );
           }
         },
-        [ "inventory" ] => {
-          // do this after we finished buy/sell 
+        [ "assets" ] => {
+          for market in game.markets.iter() {
+            println!( "{}: {}", market.name, game.player.get_assets( &market.name ) );
+          }
+        },
+        [ "show", name ] => {
+          if let Some( market ) = self.find_market( name, &mut game.markets) {
+            render_market_data( &game.player, market );
+          }
         }
         [ "quit" ] => {
           return Ok( false );
         },
         [ "help" ] => {
-          println!( "Type 'buy' to buy something from the market, remember to do it in this order: buy, amount, market name");
-          println!( "Type 'sell' to sell something from the market, remember to do it in this order: sell, amount, market name");
-          println!( "Type 'inventory' to see what kind of assets you have");
+          println!( "'buy' <amount> <market>");
+          println!( "'sell' <amount> <market>");
+          println!( "'show' <market name>");
+          println!( "Type 'assets' to see what kind of assets you have");
           println!( "Type 'done' to continue to the next day");
           println!( "Type 'quit' to exit the game");
         },
