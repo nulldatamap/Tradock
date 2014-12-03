@@ -19,9 +19,11 @@ impl ConsoleInterface {
       }
   }
 
-  fn find_market<'a>( &self, name : &str, markets : &'a Vec<Market> )
-                      -> Option<&'a Market> {
-    for market in markets.iter() {
+  // This function checks if the user typed in a valid market
+  // to buy or sell from
+  fn find_market<'a>( &self, name : &str, markets : &'a mut Vec<Market> )
+                      -> Option<&'a mut Market> {
+    for market in markets.iter_mut() {
       if name.eq_ignore_ascii_case( market.name.as_slice() ) {
         return Some( market )
       }
@@ -29,9 +31,11 @@ impl ConsoleInterface {
     None
   }
 
+  // This function handles all the functionality
+  // of the interface
   pub fn user_turn( &mut self, game : &mut Game )
                    -> Result<bool, String> {
-    println!( "Your current funds: {}", game.player.funds);
+    println!( "Your current funds: {} DKK", game.player.funds);
     for market in game.markets.iter() {
       print!( "{}: {} ", market.name, market.price ); 
       if market.data.day_count > 1 {
@@ -44,42 +48,66 @@ impl ConsoleInterface {
         println!( "" );
       }
     }
-    
-    let mut user_input = self.input.read_line().unwrap();
-    user_input.pop();
-    let slices : Vec<&str> = user_input.as_slice()
-                                       .split( ' ' )
-                                       .filter( |s| s.len() > 0 )
-                                       .collect();
-    match slices.as_slice() {
-      [ "buy", name, v ] => {
-        if let Some( x ) = from_str::<Count>( v ) {
-          println!( "You buy {} things!", x );
-        } else {
-          println!( "'{}' is not a number you dummy!", v );
+    loop {
+      let mut user_input = self.input.read_line().unwrap();
+      user_input.pop();
+      let slices : Vec<&str> = user_input.as_slice()
+                                         .trim()
+                                         .split( ' ' )
+                                         .filter( |s| s.len() > 0 )
+                                         .collect();
+      match slices.as_slice() {
+        [ "buy", amount, name ] => {
+          if let Some( x ) = from_str::<Count>( amount ) {
+            println!( "You buy {} things!", x );  
+          } else {
+            println!( "'{}' is not a number you dummy!", amount );
+          }
+          if let Some( buy_market ) = self.find_market( name, &mut game.markets ) {
+            buy_market.buy_assets( &mut game.player, 10);
+            println!( "Wow such market named: {}", buy_market.name );
+            println!( "Your current funds: {} DKK", game.player.funds);
+          } else {
+            println!( "No market named: {}", name );
+          }
+        },
+        [ "sell", amount, name ] => {
+          if let Some( x ) = from_str::<Count>( amount ) {
+            println!( "You sell {} things!", x);
+          } else {
+            println!( "'{}' is not a number you dummy!", amount);
+          }
+          if let Some( sell_market ) = self.find_market( name, &mut game.markets) {
+            sell_market.sell_assets( &mut game.player, 10);
+            println!( "Wow such market named: {}", sell_market.name );
+            println!( "Your current funds: {} DKK", game.player.funds);
+          } else {
+            println!( "No market named: {}", name );
+          }
+        },
+        [ "inventory" ] => {
+          // do this after we finished buy/sell 
         }
-        if let Some( buy_market ) = self.find_market( name, &game.markets ) {
-          println!( "Wow such market named: {}", buy_market.name );
-        } else {
-          println!( "No market named: {}", name );
+        [ "quit" ] => {
+          println!( "Exiting game...");
+          return Ok( false );
+        },
+        [ "help" ] => {
+          println!( "Type 'buy' to buy something from the market, remember to do it in this order: buy, amount, market name");
+          println!( "Type 'sell' to sell something from the market, remember to do it in this order: sell, amount, market name");
+          println!( "Type 'inventory' to see what kind of assets you have");
+          println!( "Type 'done' to continue to the next day");
+          println!( "Type 'quit' to exit the game");
+        },
+        [ "done" ] => {
+          return Ok( true );
+          break
+        },
+        [] => {},
+        _ => { 
+          println!( "Invalid command!" )
         }
-      },
-      [ "sell", name, v ] => {
-        if let Some( x ) = from_str::<Count>( v ) {
-          println!( "You sell {} things!", x);
-        } else {
-          println!( "'{}' is not a number you dummy!", v);
-        }
-        if let Some( buy_market ) = self.find_market( name, &game.markets) {
-          println!( "Wow such market named: {}", buy_market.name );
-        } else {
-          println!( "No market named: {}", name );
-        }
-      },
-      [ "done" ] => {
-        return Ok( true );
       }
-      _ => println!( "Invalid command! {}", slices.len() )
     }
 
     Ok( true )
