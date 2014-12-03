@@ -95,13 +95,16 @@ impl Game {
 
     // Give the player some starting information
     interface.print_overview( &self );
-        
+    
+    // While the interface return true, keep the game running
     while interface.user_turn( &mut self ).unwrap() {
 
+      // Get all the other agents and their AI and make them trade on the market
       for &(ref mut agent, ref mut ai) in random_order( &mut self.agents_and_ai ) {
         ai.make_decision( agent, &mut self.markets );
       }
 
+      // And then update all the markets
       for market in self.markets.iter_mut() {
         market.next_day();
       }
