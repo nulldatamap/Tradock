@@ -1,16 +1,12 @@
 use std::io::stdio::{StdReader, stdin};
 use std::io::BufferedReader;
 use std::ascii::AsciiExt;
-use std::cmp::max;
-use std::num::Float;
 
 use market::Failure::{InsufficientAgentFunds
                     , InsufficientMarketAssets
                     , InsufficientAgentAssets};
-use market::{Money, Count, Failure, Market};
-use market_data::MarketData;
+use market::{Money, Count, Market};
 use agent::Agent;
-use circularbuf::CircularBuf;
 use game::{starting_funds, Game};
 
 pub struct ConsoleInterface {
@@ -115,7 +111,7 @@ impl ConsoleInterface {
       }
   }
      // This function prints the available markets
-  pub fn print_overview( &self, game : &Game ) {
+  pub fn print_overview( &self, _ : &Game ) {
     print!( "Available markets:" );
   }
 
@@ -225,7 +221,6 @@ impl ConsoleInterface {
         },
         [ "done" ] => {
           return Ok( true );
-          break
         },
         [] => {},
         _ => { 
@@ -233,8 +228,6 @@ impl ConsoleInterface {
         }
       }
     }
-
-    Ok( true )
   }
   // This function prints out some stats when you quit the game
   pub fn print_outcome( &self, game : &Game ) {

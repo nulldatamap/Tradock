@@ -1,4 +1,4 @@
-use std::rand::{task_rng, random, Rng};
+use std::rand::{task_rng, Rng};
 use std::mem::{transmute, size_of};
 
 // This is safe since the iterator still is bound to the lifetime of it's vector.
@@ -16,12 +16,10 @@ impl<'a, T> RandomOrderIterator<'a, T> {
     let mut indencies = Vec::from_fn( items.len(), |i| i );
     // Shuffle them
     rng.shuffle( indencies.as_mut_slice() );
-    unsafe {
-                            // Turn the reference into a pointer
-      RandomOrderIterator { ptr: items.as_mut_ptr()
-                          , width: items.len()
-                          , indencies: indencies }
-    }
+                          // Turn the reference into a pointer
+    RandomOrderIterator { ptr: items.as_mut_ptr()
+                        , width: items.len()
+                        , indencies: indencies }
   } 
 }
 

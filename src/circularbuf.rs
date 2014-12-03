@@ -1,4 +1,3 @@
-
 // This is an incomplete data structure where only the needed 
 // methods will be implemented for the time being.
 
@@ -59,11 +58,13 @@ impl<T> CircularBuf<T> {
     self.items.len()
   }
 
+  #[allow(dead_code)]
   pub fn capacity( &self ) -> uint {
     self.capacity
   }
 
   // Get's the newest item on the buffer ( if any )
+  #[allow(dead_code)]
   pub fn front( &self ) -> Option<&T> {
     if self.items.len() == 0 {
       return None
