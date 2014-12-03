@@ -13,7 +13,6 @@ pub struct AI {
   high_threshold : f64,
   riskiness : f64,
   invested : Money,
-  inital_funds : Money
 }
 
 // Takes the given percentage and generates a boolean
