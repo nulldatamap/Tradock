@@ -114,7 +114,7 @@ impl ConsoleInterface {
         input: stdin()
       }
   }
-
+     // This function prints the available markets
   pub fn print_overview( &self, game : &Game ) {
     print!( "Available markets:" );
   }
@@ -158,6 +158,8 @@ impl ConsoleInterface {
                                          .split( ' ' )
                                          .filter( |s| s.len() > 0 )
                                          .collect();
+      // This part is taking care of all
+      // the commands of the interface
       match slices.as_slice() {
         [ "buy", amount, name ] => {
          if let Some( buy_market ) = self.find_market( name, &mut game.markets ) {
@@ -234,7 +236,7 @@ impl ConsoleInterface {
 
     Ok( true )
   }
-
+  // This function prints out some stats when you quit the game
   pub fn print_outcome( &self, game : &Game ) {
     let funds = game.player.funds;
     println!( "\n\nYou've retired from trading." );
