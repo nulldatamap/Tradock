@@ -10,6 +10,30 @@ pub struct CircularBuf<T> {
   capacity : uint
 }
 
+pub struct CirItems<'a, T: 'a> {
+  buf : &'a CircularBuf<T>,
+  idx : uint
+}
+
+impl<'a, T: 'a> Iterator<&'a T> for CirItems<'a, T> {
+  fn next( &mut self ) -> Option<&'a T> {
+    // We've reached the end
+    if self.idx == self.buf.len() {
+      None
+    } else {
+      // Get the next element
+      let r = &self.buf[self.idx];
+      self.idx += 1;
+      Some( r )
+    }
+  }
+
+  fn size_hint( &self ) -> (uint, Option<uint>) {
+    (self.buf.len(), Some( self.buf.len() ))
+  }
+
+}
+
 impl<T> CircularBuf<T> {
 
   pub fn new( capacity: uint ) -> CircularBuf<T> {
@@ -48,6 +72,10 @@ impl<T> CircularBuf<T> {
     } else {
       &self.items[self.items.len() - 1]
     } )
+  }
+
+  pub fn iter<'a>( &'a self ) -> CirItems<'a, T> {
+    CirItems{ buf: self, idx: 0 }
   }
 
 }

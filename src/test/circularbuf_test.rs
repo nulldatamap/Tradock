@@ -11,6 +11,13 @@ fn valid_usage() {
     cbuf.push( i );
   }
   assert_eq!( cbuf.len(), 5 );
+
+  let mut counter = 0;
+  // Make sure iteration works
+  for elm in cbuf.iter() {
+    assert_eq!( *elm, counter );
+    counter += 1;
+  }
   
   // Check that indexing on a sparse buffer works
   for i in range( 0u, 5 ) {
