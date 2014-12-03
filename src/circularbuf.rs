@@ -1,5 +1,5 @@
 
-// This is an incomplete datastructure where only the needed 
+// This is an incomplete data structure where only the needed 
 // methods will be implemented for the time being.
 
 #[deriving(Show, Clone)]
@@ -49,7 +49,7 @@ impl<T> CircularBuf<T> {
       self.items[ self.head ] = value;
       // And move the head along and make sure it wraps around
     } else {
-      // Otherwise if we're stil working with a sparse buffer
+      // Otherwise if we're still working with a sparse buffer
       // Just push the value onto the vector
       self.items.push( value );
     }

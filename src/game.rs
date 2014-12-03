@@ -1,6 +1,6 @@
 use std::rand::{task_rng, Rng};
 
-use market::Market;
+use market::{Money, Market};
 use agent::Agent;
 use ai::AI;
 use consoleinterface::ConsoleInterface;
@@ -22,12 +22,16 @@ macro_rules! market(
   )
 )
 
-fn make_player() -> Agent {
-  Agent::new( "You".to_string()
-            , 10000. ) // Starting funds
+pub fn starting_funds() -> Money {
+  10000.
 }
 
-// Get's us 3 random markets
+fn make_player() -> Agent {
+  Agent::new( "You".to_string()
+            , starting_funds() ) // Starting funds
+}
+
+// Gets us 3 random markets
 fn get_random_markets() -> Vec<Market> {
   let mut all_markets = vec![ market!( "Google"     , 0.2   , 1000000 )
                             , market!( "Microsoft"  , 0.15  , 1000000 )
@@ -43,9 +47,9 @@ fn get_random_markets() -> Vec<Market> {
                             , market!( "Burgers"    , 0.95  , 7000 )
                             , market!( "Gold"       , 5.    , 8500 )
                             , market!( "Silver"     , 3.5   , 8500 )
-                            , market!( "Cobber"     , 3.7   , 8500 )
+                            , market!( "Copper"     , 3.7   , 8500 )
                             , market!( "Iron"       , 2.2   , 8500 )
-                            , market!( "Aluminum"   , 1.9   , 8500 )
+                            , market!( "Aluminium"  , 1.9   , 8500 )
                             , market!( "Guns"       , 50.5  , 3000 )
                             , market!( "Oil"        , 105.  , 3750 )
                             , market!( "Gas"        , 100.  , 3500 )
@@ -55,7 +59,7 @@ fn get_random_markets() -> Vec<Market> {
   let mut rng = task_rng();
   // Shuffle the markets
   rng.shuffle( all_markets.as_mut_slice() );
-  // Truncate the vector so we only got 3 marktes
+  // Truncate the vector so we only got 3 markets
   all_markets.truncate( 3 );
 
   all_markets
@@ -82,10 +86,13 @@ impl Game {
   // Update the markets and make the AI trade
   // Repeat.
   fn start( mut self, mut interface : ConsoleInterface ) {
-    // Collect inital market data
+    // Collect initial market data
     for market in self.markets.iter_mut() {
       market.next_day();
     }
+
+    // Give the player some starting information
+    interface.print_overview( &self );
         
     while interface.user_turn( &mut self ).unwrap() {
 
@@ -97,7 +104,12 @@ impl Game {
         market.next_day();
       }
     }
-  } 
+
+    // Tell the player what they've accomplished
+    interface.print_outcome( &self );
+
+    // And that's it, game over.
+  }
 
 }
 

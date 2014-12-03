@@ -40,7 +40,7 @@ impl Market {
 
 
   // Takes an agent, and the amount of assets to buy, and tries to buy
-  // then for the agent. This might fail though in variaous ways
+  // then for the agent. This might fail though in various ways
   // see `market::Failure` ( in this file ) if you want to see them.
   pub fn buy_assets( &mut self, agent : &mut Agent, amount : Count )
       -> Result<(), Failure> {
@@ -86,7 +86,7 @@ impl Market {
   }
 
   // Recalculates the price for the day and resets it's counting mechanisms
-  // so it can calculate the growth acurately for next time.
+  // so it can calculate the growth accurately for next time.
   pub fn recalculate_price( &mut self ) {
     let prev_holders = self.holders as f64;
 

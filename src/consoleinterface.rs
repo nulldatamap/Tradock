@@ -1,15 +1,33 @@
+use std::io::stdio::{StdReader, stdin};
+use std::io::BufferedReader;
+use std::ascii::AsciiExt;
 
 use market::{Count, Failure, Market};
 use market_data::MarketData;
 use agent::Agent;
 use circularbuf::CircularBuf;
-use game::Game;
-use std::io::stdio::{StdReader, stdin};
-use std::io::BufferedReader;
-use std::ascii::AsciiExt;
+use game::{starting_funds, Game};
 
 pub struct ConsoleInterface {
   input : BufferedReader<StdReader>
+}
+
+fn render_market_data( player : &Agent, market : &Market ) {
+  println!( "Stats for: {}", market.name );
+  println!( "Day: {}", market.data.day_count );
+  println!( "Price per. asset: {:.2} DKK", market.price );
+  let total_price = market.assets as f64 * market.price;
+  println!( "Total market value ( {} assets ): {:.2} DKK", market.assets
+                                                         , total_price );
+  // Find the closest disable price point:
+  
+  
+  // <GRAPH HERE>
+  let assets = player.get_assets( &market.name );
+  let total_gain = assets as f64 * market.price;
+  println!( "You own: {} assets of {} ( worth {:.2} DKK )", assets
+                                                          , market.name
+                                                          , total_gain );
 }
 
 impl ConsoleInterface {
@@ -17,6 +35,10 @@ impl ConsoleInterface {
       ConsoleInterface {
         input: stdin()
       }
+  }
+
+  pub fn print_overview( &self, game : &Game ) {
+    print!( "Available markets:" );
   }
 
   // This function checks if the user typed in a valid market
@@ -35,9 +57,10 @@ impl ConsoleInterface {
   // of the interface
   pub fn user_turn( &mut self, game : &mut Game )
                    -> Result<bool, String> {
-    println!( "Your current funds: {} DKK", game.player.funds);
+    println!( "\n" )
     for market in game.markets.iter() {
-      print!( "{}: {} ", market.name, market.price ); 
+      print!( "{}: {:.2} DKK per. asset ", market.name
+                                         , market.price );
       if market.data.day_count > 1 {
         let prices = &market.data.price_history;
         let previous_day = prices.len() - 2;
@@ -48,6 +71,7 @@ impl ConsoleInterface {
         println!( "" );
       }
     }
+    println!( "\nYour current funds: {} DKK", game.player.funds);
     loop {
       let mut user_input = self.input.read_line().unwrap();
       user_input.pop();
@@ -111,6 +135,23 @@ impl ConsoleInterface {
     }
 
     Ok( true )
+  }
+
+  pub fn print_outcome( &self, game : &Game ) {
+    let funds = game.player.funds;
+    println!( "\n\nYou've retired from trading." );
+    if funds < starting_funds() {
+      println!( "You've not been lucky on the ruthless trading market and has lost:" );
+      println!( "{:7.2} DKK", starting_funds() - funds );
+      println!( "Maybe better luck next time?" );
+    } else if funds > starting_funds() {
+      println!( "You've succeed on the stock market, earning:" );
+      println!( "{:7.2} DKK", funds - starting_funds() );
+    } else {
+      println!( "You've accomplished absolutely nothing.." );
+    }
+
+    println!( "\n\nGoodbye, and thanks for playing!" );
   }
 
 }

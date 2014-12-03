@@ -19,8 +19,15 @@ fn version() -> String {
                      , env!( "CARGO_PKG_VERSION_PATCH" ) )
 }
 
+fn print_welcome_message() {
+  println!( "========= Welcome to Tradock version {}! =========", version() );
+  println!( "- By Marco 'Nulldata' Persson & Andreas W. Gustavsen.\n" );
+  println!( "Type 'help' to see the list of commands available." );
+  println!( "--------------------------------------------------" );
+}
+
 fn main() {
-  println!( "Tradock v{}", version() );
+  print_welcome_message();
   game::start_game();
 }
 
