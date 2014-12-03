@@ -41,7 +41,7 @@ impl Agent {
 
     match self.assets.get_mut( market ) {
       Some( asset_count ) => {
-
+        // Check if we don't acutally have that many assets
         if *asset_count < amount {
           return false
         } else {
@@ -49,6 +49,7 @@ impl Agent {
         }
 
       },
+      // We don't have any assets evidently!
       None => return false
     }
 

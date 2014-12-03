@@ -1,4 +1,4 @@
-use std::rand::{task_rng, Rng};
+use std::rand::{task_rng, Rng, random};
 
 use market::{Money, Market};
 use agent::Agent;
@@ -22,6 +22,7 @@ macro_rules! market(
   )
 )
 
+// The amount of money the player starts with
 pub fn starting_funds() -> Money {
   10000.
 }
@@ -69,7 +70,8 @@ impl Game {
   fn new() -> Game {
     let mut agents_and_ai = Vec::new();
     for i in range( 0, 100u ) {
-      let inital_funds = 100.; // Should be randomized
+      // Bots start with between 100 DKK to 1000000 DKK
+      let inital_funds = 100. + 999900. * random();
       agents_and_ai.push( ( Agent::new( format!( "agent#{}", i ), inital_funds )
                           , AI::make_random_ai( inital_funds ) ) );
     }

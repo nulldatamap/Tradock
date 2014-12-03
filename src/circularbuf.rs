@@ -63,6 +63,7 @@ impl<T> CircularBuf<T> {
     self.capacity
   }
 
+  // Get's the newest item on the buffer ( if any )
   pub fn front( &self ) -> Option<&T> {
     if self.items.len() == 0 {
       return None
