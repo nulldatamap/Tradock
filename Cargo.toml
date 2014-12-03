@@ -1,6 +1,6 @@
 [package]
 
-name = "Tradocks"
+name = "Tradock"
 version = "0.0.1"
 authors = ["nulldata <thebreadcat@gmail.com>", "agdeveloper <andxdgu@gmail.com>"]
 #build = "build.rs"
