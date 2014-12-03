@@ -54,4 +54,14 @@ impl Agent {
 
     true
   }
+
+  // Gets the amount of assets the agent has of the specified market.
+  pub fn get_assets( &self, market : &String ) -> Count {
+    self.assets.get( market )
+               // .get return a reference to the value, but since it's a number,
+               // we will just copy it out of the reference.
+               .map( |&v| v )
+               // And in case we've never invested in the market just return 0
+               .unwrap_or( 0 )
+  }
 }

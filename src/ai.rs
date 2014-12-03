@@ -46,10 +46,7 @@ impl AI {
         continue
       }
       // Get the how many assets we have in the current market
-      let assets = agent.assets.get( &market.name.to_string() )
-                               .map( |&v| v )
-                               // Default to 0 if it's not an entry
-                               .unwrap_or( 0 ) as f64;
+      let assets = agent.get_assets( &market.name.to_string() ) as f64;
       // If we have assets, consider selling them
       if assets > 0. {
         // Find out how much gain in % we would get
