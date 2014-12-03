@@ -1,6 +1,8 @@
-#![feature(if_let)]
+#![feature(if_let, macro_rules)]
+
 extern crate libc;
 
+mod randorditer;
 mod circularbuf;
 mod market;
 mod market_data;

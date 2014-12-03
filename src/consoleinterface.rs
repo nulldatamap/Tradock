@@ -29,7 +29,7 @@ impl ConsoleInterface {
     None
   }
 
-  pub fn user_turn( &mut self, game : &Game )
+  pub fn user_turn( &mut self, game : &mut Game )
                    -> Result<bool, String> {
     println!( "Your current funds: {}", game.player.funds);
     for market in game.markets.iter() {

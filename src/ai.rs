@@ -1,8 +1,8 @@
-
 use market::{Money};
 use market::Market;
 use agent::Agent;
 use std::rand::random;
+use randorditer::random_order;
 
 pub struct AI {
   // The lowest we sell
@@ -12,7 +12,6 @@ pub struct AI {
   invested : Money,
   inital_funds : Money
 }
-
 
 // Takes the given procentage and generates a boolean
 // with the specified chance of being true.
@@ -33,14 +32,17 @@ impl AI {
   // * It's still quite dump
   // * They only buy and sell one asset at a time
   // * They don't buy and sell in a random order
+
+  // The only buying and selling one asset at a time thing might not be a
+  // problem when we got so many bots trading at the same time.
   pub fn make_decision( &mut self, agent : &mut Agent, markets : &mut Vec<Market> ) {
     // A 10% chance that we won't trade today at all
-    if random_chance( 0.90 ) {
+    if random_chance( 0.10 ) {
       return
     }
-    for market in markets.iter_mut() {
+    for market in random_order( markets ) {
       // A 10% chance that we won't even consider trading on this market today
-      if random_chance( 0.90 ) {
+      if random_chance( 0.10 ) {
         continue
       }
       // Get the how many assets we have in the current market
