@@ -113,7 +113,6 @@ impl ConsoleInterface {
           // do this after we finished buy/sell 
         }
         [ "quit" ] => {
-          println!( "Exiting game...");
           return Ok( false );
         },
         [ "help" ] => {
